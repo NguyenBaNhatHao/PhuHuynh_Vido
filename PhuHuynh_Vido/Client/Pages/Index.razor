@@ -1,0 +1,78 @@
+﻿@page "/"
+@using PhuHuynh_Vido.Shared
+@using PhuHuynh_Vido.Shared.Dtos
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using System.Net
+@inject IPhuhuynhService _phuhuynhServices
+
+<PageTitle>Index</PageTitle>
+
+<EditForm Model="@model" OnValidSubmit="HandSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="First name" HelperText="Max. 8 characters"
+                                  @bind-Value="model.username" For="@(() => model.username)" />
+
+                    <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                                  @bind-Value="model.password" For="@(() => model.password)" InputType="InputType.Password" />
+                    <MudTextField Label="Confirm password" HelperText="Repeat the password" Class="mt-3"
+                                  @bind-Value="model.confirmpass" For="@(() => model.confirmpass)" InputType="InputType.Password" />
+                    <MudTextField Label="mssv" HelperText="nhap mssv" Class="mt-3"
+                                  @bind-Value="model.mssv" For="@(() => model.mssv)" InputType="InputType.Number" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="5">
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                @if (success)
+                {
+                    <MudText Color="Color.Success">Success</MudText>
+                }
+                else
+                {
+                    <MudText Color="@Color.Error">
+                        <ValidationSummary />
+                    </MudText>
+                }
+            </MudPaper>
+        </MudItem>
+
+    </MudGrid>
+</EditForm>
+@code {
+    bool success;
+    UserPHDTO model = new UserPHDTO();
+    [Inject] private IDialogService DialogService { get; set; }
+
+    string state = "Message box hasn't been opened yet";
+
+    async Task HandSubmit()
+    {
+        if (model.password.Equals(model.confirmpass))
+        {
+            await _phuhuynhServices.CreatePH(model);
+        }
+        if (_phuhuynhServices.RequestMessage.StatusCode.Equals(HttpStatusCode.OK))
+        {
+            success = true;
+            model.username = "";
+            model.password = "";
+            model.confirmpass = "";
+            model.mssv = "";
+            bool? result = await DialogService.ShowMessageBox(
+            "Thong bao",
+            (MarkupString)$"Nhap thanh cong!",
+            yesText: "OK", cancelText: "Cancel");
+            state = result == null ? "Returned to Moria" : "Fighting With Gandalf!";
+            StateHasChanged();
+        }
+    }
+}

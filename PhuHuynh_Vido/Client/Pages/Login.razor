@@ -1,0 +1,31 @@
+﻿@page "/Login"
+@using PhuHuynh_Vido.Shared
+@using System.ComponentModel.DataAnnotations
+@inject IIMSService _ImsServices
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Username" HelperText="Max. 8 characters"
+                                  @bind-Value="model.userid" For="@(() => model.userid)" />
+                    <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                                  @bind-Value="model.pass" For="@(() => model.pass)" InputType="InputType.Password"/>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    UserIMS model = new UserIMS();
+    bool success;
+    async Task OnValidSubmit(){
+        _ImsServices.GetUserIMS(model);
+    }
+}
