@@ -9,7 +9,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         My Application
         <MudSpacer />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/Login">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/Login" Disabled="@isDisable">
             Login
         </MudButton>
     </MudAppBar>
@@ -24,6 +24,7 @@
     </MudMainContent>
 </MudLayout>
 @code {
+    public bool isDisable;
     bool _drawerOpen = true;
 
     void DrawerToggle()

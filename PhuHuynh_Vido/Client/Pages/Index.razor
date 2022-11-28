@@ -1,13 +1,15 @@
 ﻿@page "/"
+@page "/{token}"
 @using PhuHuynh_Vido.Shared
 @using PhuHuynh_Vido.Shared.Dtos
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @using System.Net
 @inject IPhuhuynhService _phuhuynhServices
+@inject IIMSService _imsServices
 
 <PageTitle>Index</PageTitle>
-
+@if(_imsServices.userIMSDTOServices.success == true){
 <EditForm Model="@model" OnValidSubmit="HandSubmit">
     <DataAnnotationsValidator />
     <MudGrid>
@@ -47,13 +49,32 @@
 
     </MudGrid>
 </EditForm>
+}else{
+<MudGrid>
+    <MudItem xs="12" sm="5">
+        <MudPaper Class="pa-4 mud-height-full">
+            <MudText Typo="Typo.subtitle2">Xin hay dang nhap</MudText>
+        </MudPaper>
+    </MudItem>
+
+</MudGrid>
+}
+
 @code {
     bool success;
+    [Parameter]
+    public string token { get; set; }
     UserPHDTO model = new UserPHDTO();
     [Inject] private IDialogService DialogService { get; set; }
 
     string state = "Message box hasn't been opened yet";
-
+    protected override void OnParametersSet()
+    {
+        if (_imsServices.userIMSDTOServices.success == true)
+        {
+            token = _imsServices.userIMSDTOServices.token;
+        }
+    }
     async Task HandSubmit()
     {
         if (model.password.Equals(model.confirmpass))

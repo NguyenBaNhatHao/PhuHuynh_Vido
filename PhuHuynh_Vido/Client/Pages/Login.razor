@@ -2,6 +2,7 @@
 @using PhuHuynh_Vido.Shared
 @using System.ComponentModel.DataAnnotations
 @inject IIMSService _ImsServices
+@inject NavigationManager NavigationManager
 
 <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
@@ -27,5 +28,6 @@
     bool success;
     async Task OnValidSubmit(){
         _ImsServices.GetUserIMS(model);
+        NavigationManager.NavigateTo("/");
     }
 }
