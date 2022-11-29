@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject IIMSService _imsServices
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -9,8 +10,16 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         My Application
         <MudSpacer />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/Login" Disabled="@isDisable">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/Login" Disabled="@isDisable" hidden="@isDisable">
             Login
+        </MudButton>
+        <MudCard hidden="@isLogin">
+            <MudText Color="Color.Error">
+                Hello, @NameLogin
+            </MudText>
+        </MudCard>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/Login" Disabled="@isLogin" hidden="@isLogin">
+            Logout
         </MudButton>
     </MudAppBar>
 
@@ -24,9 +33,20 @@
     </MudMainContent>
 </MudLayout>
 @code {
-    public bool isDisable;
+    public bool isDisable = false;
+    public bool isLogin = true;
+    public string NameLogin = string.Empty;
     bool _drawerOpen = true;
-
+    protected override void OnParametersSet()
+    {
+        if (_imsServices.userIMSDTOServices.success == true)
+        {
+            isDisable = true;
+            isLogin = false;
+            NameLogin = _imsServices.userIMSDTOServices.user.giangVien.ten;
+            Console.WriteLine(NameLogin);
+        }
+    }
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
